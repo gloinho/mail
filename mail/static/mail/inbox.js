@@ -136,7 +136,69 @@ function button_archive(email){
     document.querySelector("#emails-view").appendChild(archive_email) 
 };
 
-function see_emails(emails){
+function see_inbox_emails(emails){
+  for (const email of emails){
+    const divemail = document.createElement('button')
+    divemail.className = 'noread row btn btn-light btn-block emails'
+    for (const info in email){
+      if (info ==='read'){
+        if (email[info])
+        divemail.classList.remove('btn-light')
+        divemail.classList.add('btn-secondary')
+      }
+      if (info === 'sender'){
+        const div_info = document.createElement('span')
+        div_info.innerHTML = `${email[info]}`
+        div_info.style.float = 'left'
+        div_info.style.fontWeight = 'bold'
+        div_info.className = 'col-2'
+        divemail.appendChild(div_info)
+      } else if (info === 'subject'){
+        const div_info = document.createElement('span')
+        div_info.innerText = email[info]
+        div_info.className = 'col-3'
+        divemail.appendChild(div_info)
+      } else if (info === 'timestamp'){
+        const div_info = document.createElement('span')
+        div_info.innerText = email[info]
+        div_info.style.float = 'right'
+        div_info.className = 'text-muted'
+        div_info.className = 'col text-right'
+        divemail.appendChild(div_info)
+      }
+    }
+    divemail.addEventListener('click', () => {one_email(email.id)})
+    document.querySelector('.col').appendChild(divemail)
+  };
+};
+
+function inbox_emails(){
+  fetch('/emails/inbox')
+  .then(response => response.json())
+  .then(emails => {
+    // Print emails
+    // ... do something else with emails ...
+    const column_email = document.createElement('div')
+    column_email.className = 'col'
+    document.querySelector("#emails-view").appendChild(column_email)
+    see_inbox_emails(emails)
+  });
+};
+
+function sent_emails(){
+  fetch('/emails/sent')
+  .then(response => response.json())
+  .then(emails =>{
+    // Print emails 
+    console.log(emails)
+    const column_email = document.createElement('div')
+    column_email.className = 'col'
+    document.querySelector("#emails-view").appendChild(column_email)
+    see_sent_emails(emails)
+  })
+};
+
+function see_sent_emails(emails){
   for (const email of emails){
     const divemail = document.createElement('div')
     divemail.className = 'emails row'
@@ -145,13 +207,12 @@ function see_emails(emails){
         if (email[info])
         divemail.classList.add('read')
       }
-      if (info === 'sender'){
+      if (info === 'recipients'){
         const div_info = document.createElement('div')
         div_info.innerHTML = `<button onclick="one_email(${email.id})" id=${email.id}>${email[info]}</button>`
-        div_info.style.fontWeight = 'bold'
-        div_info.className = 'col-2'
+        div_info.className = 'col-3'
         divemail.appendChild(div_info)
-      } else if (info === 'subject'){
+      }else if (info === 'subject'){
         const div_info = document.createElement('div')
         div_info.innerText = email[info]
         div_info.className = 'col-3'
@@ -168,32 +229,6 @@ function see_emails(emails){
   };
 };
 
-function inbox_emails(){
-  fetch('/emails/inbox')
-  .then(response => response.json())
-  .then(emails => {
-    // Print emails
-    // ... do something else with emails ...
-    const column_email = document.createElement('div')
-    column_email.className = 'col'
-    document.querySelector("#emails-view").appendChild(column_email)
-    see_emails(emails)
-  });
-};
-
-function sent_emails(){
-  fetch('/emails/sent')
-  .then(response => response.json())
-  .then(emails =>{
-    // Print emails 
-    console.log(emails)
-    const column_email = document.createElement('div')
-    column_email.className = 'col'
-    document.querySelector("#emails-view").appendChild(column_email)
-    see_emails(emails)
-  })
-};
-
 function archived_emails(){
   fetch('/emails/archive')
   .then(response => response.json())
@@ -203,9 +238,46 @@ function archived_emails(){
     const column_email = document.createElement('div')
     column_email.className = 'col'
     document.querySelector("#emails-view").appendChild(column_email)
-    see_emails(emails)
+    see_archived_emails(emails)
   })
 };
+
+function see_archived_emails(emails){
+  for (const email of emails){
+    const divemail = document.createElement('div')
+    divemail.className = 'emails row'
+    for (const info in email){
+      if (info ==='read'){
+        if (email[info])
+        divemail.classList.add('read')
+      }
+      if (info === 'sender'){
+        const div_info = document.createElement('div')
+        div_info.innerHTML = `<button onclick="one_email(${email.id})" id=${email.id}>${email[info]}</button>`
+        div_info.style.fontWeight = 'bold'
+        div_info.className = 'col-2'
+        divemail.appendChild(div_info)
+      } else if (info === 'recipients'){
+        const div_info = document.createElement('div')
+        div_info.innerText = `To: ${email[info]}`
+        div_info.className = 'col-3'
+        divemail.appendChild(div_info)
+      }else if (info === 'subject'){
+        const div_info = document.createElement('div')
+        div_info.innerText = email[info]
+        div_info.className = 'col-3'
+        divemail.appendChild(div_info)
+      } else if (info === 'timestamp'){
+        const div_info = document.createElement('div')
+        div_info.innerText = email[info]
+        div_info.className = 'text-muted'
+        div_info.className = 'col text-right'
+        divemail.appendChild(div_info)
+      }
+    }
+    document.querySelector('.col').appendChild(divemail)
+  };
+}
 
 function send_email(){
   const c_recipients = document.querySelector('#compose-recipients').value;
