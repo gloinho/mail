@@ -1,0 +1,18 @@
+textarea {
+    min-height: 400px;
+}
+
+.emails{
+    border:1px solid red;
+
+}
+
+.read{
+    background-color: grey;
+}
+
+.info{
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    margin-bottom: 30px;
+}
