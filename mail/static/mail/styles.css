@@ -3,14 +3,18 @@ textarea {
 }
 
 .emails{
-    border:1px solid red;
+    border:1px solid black;
+    margin-bottom: 5px;
+    align-items: center;
+    color: black;
 
 }
-
-.read{
-    background-color: grey;
+.btn-secondary{
+    color:white
 }
-
+.btn-light{
+    color:black
+}
 .info{
     border-top: 1px solid lightgray;
     border-bottom: 1px solid lightgray;
