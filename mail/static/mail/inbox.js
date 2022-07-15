@@ -125,15 +125,18 @@ function email_archive(email){
 };
 
 function button_archive(email){
-    const archive_email = document.createElement('button')
-    if (email.archived){
-      archive_email.innerText = 'Unarchive Email'
-    } else {
-      archive_email.innerText = 'Archive Email'
-    }
-    
-    archive_email.addEventListener('click', () => {email_archive(email)})
-    document.querySelector("#emails-view").appendChild(archive_email) 
+  const archive_email = document.createElement('button')
+  archive_email.style.marginBottom = '5px'
+  if (email.archived){
+    archive_email.innerText = 'Unarchive Email'
+    archive_email.className = 'btn btn-danger'
+  } else {
+    archive_email.innerText = 'Archive Email'
+    archive_email.className = 'btn btn-info'
+  }
+  
+  archive_email.addEventListener('click', () => {email_archive(email)})
+  document.querySelector("#emails-view").appendChild(archive_email) 
 };
 
 function see_inbox_emails(emails){
