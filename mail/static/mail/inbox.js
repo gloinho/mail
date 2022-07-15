@@ -21,7 +21,9 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 
   // Send Email
-  document.querySelector('#send_email').addEventListener('click', send_email)
+  document.querySelector('#send_email').addEventListener('click', () => {
+    let test = send_email()
+    console.log(test)})
 };
 
 function load_mailbox(mailbox) {
@@ -209,7 +211,7 @@ function send_email(){
   const c_recipients = document.querySelector('#compose-recipients').value;
   const c_subject = document.querySelector('#compose-subject').value;
   const c_body = document.querySelector('#compose-body').value;
-  fetch('/emails', {
+ fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
         recipients: c_recipients,
@@ -218,12 +220,11 @@ function send_email(){
     })
   })
   .then(response => response.json())
-  .then(result => {
-    if (result.message === undefined){
-      alert(result.error)
-    } else {
+  .then(result => { 
+    if (result.message){
       alert(result.message)
-    }     
+    }
+    else(alert(result.error))
   });
 };
 
