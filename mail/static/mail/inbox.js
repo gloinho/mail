@@ -34,7 +34,6 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
-
   // Show all emails
   if (mailbox === 'inbox'){
     inbox_emails()
@@ -46,6 +45,7 @@ function load_mailbox(mailbox) {
   else if (mailbox === 'archive'){
     archived_emails()
   }
+  
 };
 
 function one_email(id){
@@ -142,7 +142,7 @@ function button_archive(email){
 function see_inbox_emails(emails){
   for (const email of emails){
     const divemail = document.createElement('button')
-    divemail.className = 'noread row btn btn-light btn-block emails'
+    divemail.className = 'noread row btn-sm btn-light btn-block email'
     for (const info in email){
       if (info ==='read'){
         if (email[info])
@@ -154,24 +154,20 @@ function see_inbox_emails(emails){
         div_info.innerHTML = `${email[info]}`
         div_info.style.float = 'left'
         div_info.style.fontWeight = 'bold'
-        div_info.className = 'col-2'
         divemail.appendChild(div_info)
       } else if (info === 'subject'){
         const div_info = document.createElement('span')
         div_info.innerText = email[info]
-        div_info.className = 'col-3'
         divemail.appendChild(div_info)
       } else if (info === 'timestamp'){
         const div_info = document.createElement('span')
         div_info.innerText = email[info]
         div_info.style.float = 'right'
-        div_info.className = 'text-muted'
-        div_info.className = 'col text-right'
         divemail.appendChild(div_info)
       }
     }
     divemail.addEventListener('click', () => {one_email(email.id)})
-    document.querySelector('.col').appendChild(divemail)
+    document.querySelector('.col.emails').appendChild(divemail)
   };
 };
 
@@ -182,8 +178,9 @@ function inbox_emails(){
     // Print emails
     // ... do something else with emails ...
     const column_email = document.createElement('div')
-    column_email.className = 'col'
+    column_email.className = 'col emails'
     document.querySelector("#emails-view").appendChild(column_email)
+    title('inbox')
     see_inbox_emails(emails)
   });
 };
@@ -195,40 +192,42 @@ function sent_emails(){
     // Print emails 
     console.log(emails)
     const column_email = document.createElement('div')
-    column_email.className = 'col'
+    column_email.className = 'col emails'
     document.querySelector("#emails-view").appendChild(column_email)
+    title('sent')
     see_sent_emails(emails)
   })
 };
 
 function see_sent_emails(emails){
   for (const email of emails){
-    const divemail = document.createElement('div')
-    divemail.className = 'emails row'
+    const divemail = document.createElement('button')
+    divemail.className = 'noread row btn-sm btn-light btn-block email'
     for (const info in email){
       if (info ==='read'){
         if (email[info])
-        divemail.classList.add('read')
+        divemail.classList.remove('btn-light')
+        divemail.classList.add('btn-secondary')
       }
       if (info === 'recipients'){
-        const div_info = document.createElement('div')
-        div_info.innerHTML = `<button onclick="one_email(${email.id})" id=${email.id}>${email[info]}</button>`
-        div_info.className = 'col-3'
+        const div_info = document.createElement('span')
+        div_info.innerHTML = `${email[info]}`
+        div_info.style.float = 'left'
+        div_info.style.fontWeight = 'bold'
         divemail.appendChild(div_info)
-      }else if (info === 'subject'){
-        const div_info = document.createElement('div')
+      } else if (info === 'subject'){
+        const div_info = document.createElement('span')
         div_info.innerText = email[info]
-        div_info.className = 'col-3'
         divemail.appendChild(div_info)
       } else if (info === 'timestamp'){
-        const div_info = document.createElement('div')
+        const div_info = document.createElement('span')
         div_info.innerText = email[info]
-        div_info.className = 'text-muted'
-        div_info.className = 'col text-right'
+        div_info.style.float = 'right'
         divemail.appendChild(div_info)
       }
     }
-    document.querySelector('.col').appendChild(divemail)
+    divemail.addEventListener('click', () => {one_email(email.id)})
+    document.querySelector('.col.emails').appendChild(divemail)
   };
 };
 
@@ -239,48 +238,12 @@ function archived_emails(){
     // Print emails 
     console.log(emails)
     const column_email = document.createElement('div')
-    column_email.className = 'col'
+    column_email.className = 'col emails'
     document.querySelector("#emails-view").appendChild(column_email)
-    see_archived_emails(emails)
+    title('inbox')
+    see_inbox_emails(emails)
   })
 };
-
-function see_archived_emails(emails){
-  for (const email of emails){
-    const divemail = document.createElement('div')
-    divemail.className = 'emails row'
-    for (const info in email){
-      if (info ==='read'){
-        if (email[info])
-        divemail.classList.add('read')
-      }
-      if (info === 'sender'){
-        const div_info = document.createElement('div')
-        div_info.innerHTML = `<button onclick="one_email(${email.id})" id=${email.id}>${email[info]}</button>`
-        div_info.style.fontWeight = 'bold'
-        div_info.className = 'col-2'
-        divemail.appendChild(div_info)
-      } else if (info === 'recipients'){
-        const div_info = document.createElement('div')
-        div_info.innerText = `To: ${email[info]}`
-        div_info.className = 'col-3'
-        divemail.appendChild(div_info)
-      }else if (info === 'subject'){
-        const div_info = document.createElement('div')
-        div_info.innerText = email[info]
-        div_info.className = 'col-3'
-        divemail.appendChild(div_info)
-      } else if (info === 'timestamp'){
-        const div_info = document.createElement('div')
-        div_info.innerText = email[info]
-        div_info.className = 'text-muted'
-        div_info.className = 'col text-right'
-        divemail.appendChild(div_info)
-      }
-    }
-    document.querySelector('.col').appendChild(divemail)
-  };
-}
 
 function send_email(){
   const c_recipients = document.querySelector('#compose-recipients').value;
@@ -312,3 +275,37 @@ function email_read(email){
   })
 }
 
+function title(path){
+  const title = document.createElement('div')
+  title.id = 'title'
+  title.className = 'row title text-center'
+  document.querySelector('.col.emails').appendChild(title)
+  if (path ==='inbox'){
+    const col1 = document.createElement('div')
+    col1.className = 'title col-2'
+    col1.innerText = 'Sent by'
+    const col2 = document.createElement('div')
+    col2.className = 'title col-8'
+    col2.innerText = 'Subject'
+    const col3 = document.createElement('div')
+    col3.className = 'title col-2'
+    col3.innerText = 'Date'
+    title.appendChild(col1)
+    title.appendChild(col2)
+    title.appendChild(col3)
+  } else if (path === 'sent'){
+    const col1 = document.createElement('div')
+    col1.className = 'title col-2'
+    col1.innerText = 'Sent for'
+    const col2 = document.createElement('div')
+    col2.className = 'title col-8'
+    col2.innerText = 'Subject'
+    const col3 = document.createElement('div')
+    col3.className = 'title col-2'
+    col3.innerText = 'Date'
+    title.appendChild(col1)
+    title.appendChild(col2)
+    title.appendChild(col3)
+
+  }
+}
