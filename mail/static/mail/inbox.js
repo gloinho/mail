@@ -109,8 +109,8 @@ function email_archive(email){
         archived:false
       })
     })
-    .then(alert('Unarchived'))
     .then(load_mailbox('inbox'))
+    .then(alert_callback('Unarchived'))
   } else {
     fetch(`/emails/${email.id}`, {
       method: 'PUT',
@@ -118,8 +118,8 @@ function email_archive(email){
         archived:true
       })
     })
-    .then(alert('Archived'))
     .then(load_mailbox('inbox'))
+    .then(alert_callback('Archived'))
   }  
 };
 
@@ -273,8 +273,7 @@ function send_email(){
   const c_recipients = document.querySelector('#compose-recipients').value;
   const c_subject = document.querySelector('#compose-subject').value;
   const c_body = document.querySelector('#compose-body').value;
-  let alert = document.createElement('div')
-  alert.setAttribute('role','alert')
+  
  fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
@@ -285,24 +284,29 @@ function send_email(){
   })
   .then(response => response.json())
   .then(result => { 
-    if(result.message){
-      alert.className = 'alert alert-success alert-dismissible fade show'
-      alert.innerText = result.message
-      document.querySelector('#emails-view').appendChild(alert)
-    } else {
-      alert.className = 'alert alert-danger alert-dismissible fade show'
-      alert.innerText = result.error
-      document.querySelector('#emails-view').appendChild(alert)
-    }   
+    alert_callback(result)
   });
   load_mailbox('sent')
   return false
 };
 
 function alert_callback(result){
+  let alert = document.createElement('div')
+  alert.setAttribute('role','alert')
   if(result.message){
-    alert(result.message)
-  } else{alert(result.error)} 
+    alert.className = 'alert alert-success alert-dismissible fade show'
+    alert.innerText = result.message
+  } else if(result.error){
+    alert.className = 'alert alert-danger alert-dismissible fade show'
+    alert.innerText = result.error
+  } else if(result ==='Unarchived'){
+    alert.className = 'alert alert-info alert-dismissible fade show'
+    alert.innerText = result
+  } else if(result === 'Archived'){
+    alert.className = 'alert alert-info alert-dismissible fade show'
+    alert.innerText = result
+  }
+  document.querySelector('#emails-view').appendChild(alert)
 }
 
 function email_read(email){
