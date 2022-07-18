@@ -183,7 +183,6 @@ function button_archive(email){
 
 function see_inbox_emails(emails){
   /* Show all emails in the inbox (read or unread but always not archived) */
-
   for (const email of emails){
     const divemail = document.createElement('button')
     divemail.className = 'noread row btn-sm btn-light btn-block email'
@@ -316,6 +315,7 @@ function send_email(){
   .then(result => { 
     alert_callback(result)
   });
+  localStorage.clear()
   load_mailbox('sent')
   return false
 };
@@ -355,7 +355,7 @@ function email_read(email){
 }
 
 function title(path){
-  
+
   /* Title for the mailboxes to explain the email details */
 
   const title = document.createElement('div')
