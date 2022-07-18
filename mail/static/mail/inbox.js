@@ -44,6 +44,8 @@ function load_mailbox(mailbox) {
 };
 
 function one_email(id){
+  /* Request one email. */
+
   fetch(`/emails/${id}`)
   .then(response => response.json())
   .then(email => {
@@ -56,11 +58,16 @@ function one_email(id){
 };
 
 function detail_email(email){
+  /* Detail the requested email */
+
+  //Show buttons if the email was not sent by the user logged in
   user = document.getElementById('user').innerText
   if(email.sender !== user){
     button_archive(email)
     button_reply(email)
   }
+
+  // Create elements for the detailed view
   const column_email = document.createElement('div')
   const subject = document.createElement('div')
   column_email.className = 'col info'
@@ -102,6 +109,8 @@ function detail_email(email){
 };
 
 function email_archive(email){
+  /* Archive the email with a PUT request.*/
+
   if (email.archived){
     fetch(`/emails/${email.id}`, {
       method: 'PUT',
@@ -124,12 +133,16 @@ function email_archive(email){
 };
 
 function button_reply(email){
+  /*  Populates the compose forms with previous sender and bodies.*/
+
   const button = document.createElement('button')
   button.style.marginBottom = '5px'
   button.style.marginLeft = '5px'
   button.innerText = 'Reply'
   button.className = 'btn btn-info'
   let body = ''
+
+  // If the email already has an reply, add another reply
   if(email.body.startsWith('->')){
     let replies = email.body.match((/^->.+;/gm))
     for (reply in replies){
@@ -137,7 +150,10 @@ function button_reply(email){
     }
     let new_body = email.body.match(/^[^->].+$/gm)
     body += `-> On ${email.timestamp} ${email.sender} wrote: "${new_body}";\n`
-  } else{body=`-> On ${email.timestamp} ${email.sender} wrote: "${email.body}";\n`}
+  } 
+  else{body=`-> On ${email.timestamp} ${email.sender} wrote: "${email.body}";\n`}
+
+  // Only one Re: on the subject of the email.
   button.addEventListener('click', () => {
     if(email.subject.slice(0,3)==='Re:'){
       compose_email(email.sender, email.subject, body)
@@ -149,6 +165,8 @@ function button_reply(email){
 }
 
 function button_archive(email){
+  /* Creates a button for archiving emails */
+
   const archive_email = document.createElement('button')
   archive_email.style.marginBottom = '5px'
   if (email.archived){
@@ -164,6 +182,8 @@ function button_archive(email){
 };
 
 function see_inbox_emails(emails){
+  /* Show all emails in the inbox (read or unread but always not archived) */
+
   for (const email of emails){
     const divemail = document.createElement('button')
     divemail.className = 'noread row btn-sm btn-light btn-block email'
@@ -196,6 +216,8 @@ function see_inbox_emails(emails){
 };
 
 function inbox_emails(){
+  /* Request the inbox of the user. */
+
   fetch('/emails/inbox')
   .then(response => response.json())
   .then(emails => {
@@ -210,6 +232,8 @@ function inbox_emails(){
 };
 
 function sent_emails(){
+  /* Request the sent emails of the user. */
+
   fetch('/emails/sent')
   .then(response => response.json())
   .then(emails =>{
@@ -224,6 +248,8 @@ function sent_emails(){
 };
 
 function see_sent_emails(emails){
+   /* Show all emails in the sent mails*/
+
   for (const email of emails){
     const divemail = document.createElement('button')
     divemail.className = 'noread row btn-sm btn-light btn-block email'
@@ -256,6 +282,8 @@ function see_sent_emails(emails){
 };
 
 function archived_emails(){
+   /* Request the archived emails of the user .*/
+
   fetch('/emails/archive')
   .then(response => response.json())
   .then(emails =>{
@@ -270,6 +298,8 @@ function archived_emails(){
 };
 
 function send_email(){
+  /* Send a post request to send an email. */
+
   const c_recipients = document.querySelector('#compose-recipients').value;
   const c_subject = document.querySelector('#compose-subject').value;
   const c_body = document.querySelector('#compose-body').value;
@@ -291,6 +321,9 @@ function send_email(){
 };
 
 function alert_callback(result){
+  
+  /* Creates alert boxes */
+
   let alert = document.createElement('div')
   alert.setAttribute('role','alert')
   if(result.message){
@@ -310,6 +343,9 @@ function alert_callback(result){
 }
 
 function email_read(email){
+
+  /* Changes the email to read */
+
   fetch(`/emails/${email.id}`, {
     method:'PUT',
     body: JSON.stringify({
@@ -319,6 +355,9 @@ function email_read(email){
 }
 
 function title(path){
+  
+  /* Title for the mailboxes to explain the email details */
+
   const title = document.createElement('div')
   title.id = 'title'
   title.className = 'row title text-center'
