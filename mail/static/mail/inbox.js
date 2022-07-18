@@ -3,12 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', ()=>{compose_email('')});
+  document.querySelector('#compose').addEventListener('click', ()=>{compose_email('','','')});
   load_mailbox('inbox')
 
 });
 
-function compose_email(recipients) {
+function compose_email(recipients, subject, body) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -16,8 +16,8 @@ function compose_email(recipients) {
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = recipients;
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = body;
 
   // Send Email
   document.querySelector('#send_email').addEventListener('click', () => {
@@ -133,12 +133,24 @@ function button_reply(email){
   button.style.marginLeft = '5px'
   button.innerText = 'Reply'
   button.className = 'btn btn-info'
+  let body = ''
+  if(email.body.startsWith('->')){
+    let replies = email.body.match((/^->.+;/gm))
+    for (reply in replies){
+      body += `${replies[reply]}\n`
+    }
+    let new_body = email.body.match(/^[^->].+$/gm)
+    body += `-> On ${email.timestamp} ${email.sender} wrote: "${new_body}";\n`
+  } else{body=`-> On ${email.timestamp} ${email.sender} wrote: "${email.body}";\n`}
   button.addEventListener('click', () => {
-    compose_email(email.sender)
+    if(email.subject.slice(0,3)==='Re:'){
+      compose_email(email.sender, email.subject, body)
+    } else{
+      compose_email(email.sender,'Re: '+email.subject, body)
+    }
   })
   document.querySelector("#emails-view").appendChild(button) 
 }
-
 
 function button_archive(email){
   const archive_email = document.createElement('button')
@@ -281,7 +293,6 @@ function send_email(){
 
 function alert_callback(result){
   if(result.message){
-    console.log(teste)
     alert(result.message)
   } else{alert(result.error)} 
 }
