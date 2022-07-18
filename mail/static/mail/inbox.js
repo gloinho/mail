@@ -118,8 +118,8 @@ function email_archive(email){
         archived:false
       })
     })
+    .then(alert('Unarchived'))
     .then(load_mailbox('inbox'))
-    .then(alert_callback('Unarchived'))
   } else {
     fetch(`/emails/${email.id}`, {
       method: 'PUT',
@@ -127,8 +127,8 @@ function email_archive(email){
         archived:true
       })
     })
+    .then(alert('Archived'))
     .then(load_mailbox('inbox'))
-    .then(alert_callback('Archived'))
   }  
 };
 
@@ -313,10 +313,10 @@ function send_email(){
   })
   .then(response => response.json())
   .then(result => { 
+    localStorage.clear()
+    load_mailbox('sent')
     alert_callback(result)
   });
-  localStorage.clear()
-  load_mailbox('sent')
   return false
 };
 
@@ -331,14 +331,7 @@ function alert_callback(result){
     alert.innerText = result.message
   } else if(result.error){
     alert.className = 'alert alert-danger alert-dismissible fade show'
-    alert.innerText = result.error
-  } else if(result ==='Unarchived'){
-    alert.className = 'alert alert-info alert-dismissible fade show'
-    alert.innerText = result
-  } else if(result === 'Archived'){
-    alert.className = 'alert alert-info alert-dismissible fade show'
-    alert.innerText = result
-  }
+    alert.innerText = result.error}
   document.querySelector('#emails-view').appendChild(alert)
 }
 
