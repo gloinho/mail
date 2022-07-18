@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', ()=>{compose_email('','','')});
+  document.querySelector('form').onsubmit = send_email
   load_mailbox('inbox')
 
 });
@@ -18,11 +19,6 @@ function compose_email(recipients, subject, body) {
   document.querySelector('#compose-recipients').value = recipients;
   document.querySelector('#compose-subject').value = subject;
   document.querySelector('#compose-body').value = body;
-
-  // Send Email
-  document.querySelector('#send_email').addEventListener('click', () => {
-    send_email()
-})
 };
 
 function load_mailbox(mailbox) {
@@ -277,6 +273,8 @@ function send_email(){
   const c_recipients = document.querySelector('#compose-recipients').value;
   const c_subject = document.querySelector('#compose-subject').value;
   const c_body = document.querySelector('#compose-body').value;
+  let alert = document.createElement('div')
+  alert.setAttribute('role','alert')
  fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
@@ -287,8 +285,18 @@ function send_email(){
   })
   .then(response => response.json())
   .then(result => { 
-    alert_callback(result)
+    if(result.message){
+      alert.className = 'alert alert-success alert-dismissible fade show'
+      alert.innerText = result.message
+      document.querySelector('#emails-view').appendChild(alert)
+    } else {
+      alert.className = 'alert alert-danger alert-dismissible fade show'
+      alert.innerText = result.error
+      document.querySelector('#emails-view').appendChild(alert)
+    }   
   });
+  load_mailbox('sent')
+  return false
 };
 
 function alert_callback(result){
